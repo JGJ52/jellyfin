@@ -58,6 +58,7 @@ public class EncodingOptions
         EnableHardwareEncoding = true;
         AllowHevcEncoding = false;
         AllowAv1Encoding = false;
+        AllowVp9Encoding = false;
         EnableSubtitleExtraction = true;
         SubtitleExtractionTimeoutMinutes = 30;
         AllowOnDemandMetadataBasedKeyframeExtractionForExtensions = ["mkv"];
@@ -284,6 +285,11 @@ public class EncodingOptions
     /// Gets or sets a value indicating whether AV1 encoding is enabled.
     /// </summary>
     public bool AllowAv1Encoding { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether VP9 encoding is enabled.
+    /// </summary>
+    public bool AllowVp9Encoding { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether subtitle extraction is enabled.
