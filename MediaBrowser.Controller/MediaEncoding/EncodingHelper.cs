@@ -208,6 +208,9 @@ namespace MediaBrowser.Controller.MediaEncoding
 
         public string GetAv1Encoder(EncodingJobInfo state, EncodingOptions encodingOptions)
             => GetH26xOrAv1Encoder("libsvtav1", "av1", state, encodingOptions);
+        
+        public string GetVp9Encoder(EncodingJobInfo state, EncodingOptions encodingOptions)
+            => GetH26xOrAv1Encoder("libvpx-vp9", "vp9", state, encodingOptions);
 
         private string GetH26xOrAv1Encoder(string defaultEncoder, string hwEncoder, EncodingJobInfo state, EncodingOptions encodingOptions)
         {
@@ -480,36 +483,42 @@ namespace MediaBrowser.Controller.MediaEncoding
         public string GetVideoEncoder(EncodingJobInfo state, EncodingOptions encodingOptions)
         {
             var codec = state.OutputVideoCodec;
-
+        
             if (!string.IsNullOrEmpty(codec))
             {
                 if (string.Equals(codec, "av1", StringComparison.OrdinalIgnoreCase))
                 {
                     return GetAv1Encoder(state, encodingOptions);
                 }
-
+        
                 if (string.Equals(codec, "h265", StringComparison.OrdinalIgnoreCase)
                     || string.Equals(codec, "hevc", StringComparison.OrdinalIgnoreCase))
                 {
                     return GetH265Encoder(state, encodingOptions);
                 }
-
+        
                 if (string.Equals(codec, "h264", StringComparison.OrdinalIgnoreCase))
                 {
                     return GetH264Encoder(state, encodingOptions);
                 }
-
+        
+                // NEW
+                if (string.Equals(codec, "vp9", StringComparison.OrdinalIgnoreCase))
+                {
+                    return GetVp9Encoder(state, encodingOptions);
+                }
+        
                 if (string.Equals(codec, "mjpeg", StringComparison.OrdinalIgnoreCase))
                 {
                     return GetMjpegEncoder(state, encodingOptions);
                 }
-
+        
                 if (ContainerValidationRegex().IsMatch(codec))
                 {
                     return codec.ToLowerInvariant();
                 }
             }
-
+        
             return "copy";
         }
 
@@ -7591,6 +7600,11 @@ namespace MediaBrowser.Controller.MediaEncoding
             if (!encodingOptions.AllowAv1Encoding)
             {
                 shiftVideoCodecs.Add("av1");
+            }
+            
+            if (!encodingOptions.AllowVp9Encoding)
+            {
+                shiftVideoCodecs.Add("vp9");
             }
 
             if (videoCodecs.All(i => shiftVideoCodecs.Contains(i, StringComparison.OrdinalIgnoreCase)))
