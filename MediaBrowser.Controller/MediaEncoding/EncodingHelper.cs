@@ -1667,7 +1667,7 @@ namespace MediaBrowser.Controller.MediaEncoding
             if (string.Equals(videoCodec, "h264_qsv", StringComparison.OrdinalIgnoreCase)
                 || string.Equals(videoCodec, "hevc_qsv", StringComparison.OrdinalIgnoreCase)
                 || string.Equals(videoCodec, "av1_qsv", StringComparison.OrdinalIgnoreCase)
-                || string.Equals(videoCodec, "vp9_qsv", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(videoCodec, "vp9_qsv", StringComparison.OrdinalIgnoreCase))
             {
                 // TODO: probe QSV encoders' capabilities and enable more tuning options
                 // See also https://github.com/intel/media-delivery/blob/master/doc/quality.rst
