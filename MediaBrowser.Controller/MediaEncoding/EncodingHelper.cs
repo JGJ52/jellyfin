@@ -210,7 +210,7 @@ namespace MediaBrowser.Controller.MediaEncoding
             => GetH26xOrAv1Encoder("libsvtav1", "av1", state, encodingOptions);
         
         public string GetVp9Encoder(EncodingJobInfo state, EncodingOptions encodingOptions)
-            => GetH26xOrAv1Encoder("libvpx-vp9", "vp9", state, encodingOptions);
+            => "vp9_qsv";
 
         private string GetH26xOrAv1Encoder(string defaultEncoder, string hwEncoder, EncodingJobInfo state, EncodingOptions encodingOptions)
         {
@@ -7662,7 +7662,6 @@ namespace MediaBrowser.Controller.MediaEncoding
         {
             // Get the output codec name
             var videoCodec = GetVideoEncoder(state, encodingOptions);
-            if (string.Equals(videoCodec, "libvpx-vp9", StringComparison.OrdinalIgnoreCase)) videoCodec = "vp9_qsv"; // its specifically for me
 
             var format = string.Empty;
             var keyFrame = string.Empty;
