@@ -1634,6 +1634,8 @@ namespace MediaBrowser.Controller.MediaEncoding
 
         private string GetVideoBitrateParam(EncodingJobInfo state, string videoCodec)
         {
+            if (string.Equals(videoCodec, "libvpx-vp9", StringComparison.OrdinalIgnoreCase)) videoCodec = "vp9_qsv"; // its specifically for me
+            
             if (state.OutputVideoBitrate is null)
             {
                 return string.Empty;
@@ -1664,7 +1666,8 @@ namespace MediaBrowser.Controller.MediaEncoding
 
             if (string.Equals(videoCodec, "h264_qsv", StringComparison.OrdinalIgnoreCase)
                 || string.Equals(videoCodec, "hevc_qsv", StringComparison.OrdinalIgnoreCase)
-                || string.Equals(videoCodec, "av1_qsv", StringComparison.OrdinalIgnoreCase))
+                || string.Equals(videoCodec, "av1_qsv", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(videoCodec, "vp9_qsv", StringComparison.OrdinalIgnoreCase)
             {
                 // TODO: probe QSV encoders' capabilities and enable more tuning options
                 // See also https://github.com/intel/media-delivery/blob/master/doc/quality.rst
@@ -1726,25 +1729,6 @@ namespace MediaBrowser.Controller.MediaEncoding
                 // The `maxrate` and `bufsize` options can potentially lead to performance regression
                 // and even encoder hangs, especially when the value is very high.
                 return FormattableString.Invariant($" -b:v {bitrate} -qmin -1 -qmax -1");
-            }
-            else if (string.Equals(videoEncoder, "libvpx-vp9", StringComparison.OrdinalIgnoreCase))
-            {
-                param += " -deadline realtime -row-mt 1 -tile-columns 2";
-            
-                param += encoderPreset switch
-                {
-                    EncoderPreset.veryslow => " -cpu-used 4",
-                    EncoderPreset.slower => " -cpu-used 5",
-                    EncoderPreset.slow => " -cpu-used 5",
-                    EncoderPreset.medium => " -cpu-used 6",
-                    EncoderPreset.fast => " -cpu-used 7",
-                    _ => " -cpu-used 8"
-                };
-            }
-            else if (string.Equals(videoEncoder, "vp9_qsv", StringComparison.OrdinalIgnoreCase))
-            {
-                EncoderPreset[] valid_presets = [EncoderPreset.veryslow, EncoderPreset.slower, EncoderPreset.slow, EncoderPreset.medium, EncoderPreset.fast, EncoderPreset.faster, EncoderPreset.veryfast];
-                param += " -preset " + (valid_presets.Contains(encoderPreset) ? encoderPreset : EncoderPreset.veryfast).ToString().ToLowerInvariant();
             }
 
             return FormattableString.Invariant($" -b:v {bitrate} -maxrate {bitrate} -bufsize {bufsize}");
