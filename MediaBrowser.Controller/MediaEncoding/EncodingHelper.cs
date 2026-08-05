@@ -1727,6 +1727,25 @@ namespace MediaBrowser.Controller.MediaEncoding
                 // and even encoder hangs, especially when the value is very high.
                 return FormattableString.Invariant($" -b:v {bitrate} -qmin -1 -qmax -1");
             }
+            else if (string.Equals(videoEncoder, "libvpx-vp9", StringComparison.OrdinalIgnoreCase))
+            {
+                param += " -deadline realtime -row-mt 1 -tile-columns 2";
+            
+                param += encoderPreset switch
+                {
+                    EncoderPreset.veryslow => " -cpu-used 4",
+                    EncoderPreset.slower => " -cpu-used 5",
+                    EncoderPreset.slow => " -cpu-used 5",
+                    EncoderPreset.medium => " -cpu-used 6",
+                    EncoderPreset.fast => " -cpu-used 7",
+                    _ => " -cpu-used 8"
+                };
+            }
+            else if (string.Equals(videoEncoder, "vp9_qsv", StringComparison.OrdinalIgnoreCase))
+            {
+                EncoderPreset[] valid_presets = [EncoderPreset.veryslow, EncoderPreset.slower, EncoderPreset.slow, EncoderPreset.medium, EncoderPreset.fast, EncoderPreset.faster, EncoderPreset.veryfast];
+                param += " -preset " + (valid_presets.Contains(encoderPreset) ? encoderPreset : EncoderPreset.veryfast).ToString().ToLowerInvariant();
+            }
 
             return FormattableString.Invariant($" -b:v {bitrate} -maxrate {bitrate} -bufsize {bufsize}");
         }
