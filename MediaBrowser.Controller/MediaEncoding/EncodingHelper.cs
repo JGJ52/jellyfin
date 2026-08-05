@@ -1633,9 +1633,7 @@ namespace MediaBrowser.Controller.MediaEncoding
         }
 
         private string GetVideoBitrateParam(EncodingJobInfo state, string videoCodec)
-        {
-            if (string.Equals(videoCodec, "libvpx-vp9", StringComparison.OrdinalIgnoreCase)) videoCodec = "vp9_qsv"; // its specifically for me
-            
+        {            
             if (state.OutputVideoBitrate is null)
             {
                 return string.Empty;
@@ -7664,6 +7662,7 @@ namespace MediaBrowser.Controller.MediaEncoding
         {
             // Get the output codec name
             var videoCodec = GetVideoEncoder(state, encodingOptions);
+            if (string.Equals(videoCodec, "libvpx-vp9", StringComparison.OrdinalIgnoreCase)) videoCodec = "vp9_qsv"; // its specifically for me
 
             var format = string.Empty;
             var keyFrame = string.Empty;
